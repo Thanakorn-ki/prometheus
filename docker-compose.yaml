@@ -1,0 +1,38 @@
+version: '3.5'
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+services:
+  app: 
+    container_name: app_service
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    working_dir: /src/go
+    volumes:
+      - ./:/src/go
+      - $GOPATH/pkg/mod:/go/pkg/mod
+    ports: 
+      - 5555:5555
+    command: reflex -c reflex.conf
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/promtheus
+    command:
+     - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - '9090:9090'
+    restart: always
+  grafana:
+    image: grafana/grafana:3.0.0-beta7
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
