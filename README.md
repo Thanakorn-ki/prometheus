@@ -11,6 +11,10 @@ docker-compose up
 ```sh
 docker-compose down
 ```
+> The dashboard
+- <localhost:3000> Grafana dashboard user:admin, password:admin
+- <localhost:9000> Prometheus dashboard
+
 
 ## Contributor
 
